@@ -22,21 +22,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- Workdir ----
-WORKDIR /src
+WORKDIR /app
 
 # ---- Poetry ----
 RUN pip install --no-cache-dir "poetry==${POETRY_VERSION}"
 
 # 依存解決のキャッシュを効かせるため、先に定義ファイルだけコピー
-COPY backend/poetry/pyproject.toml ./
-COPY backend/poetry/poetry.lock* ./
+COPY deployment/backend/poetry/pyproject.toml /app/
+COPY deployment/backend/poetry/poetry.lock* /app/
 
 # 本番（ランタイム最小）にするなら --no-dev を検討
 # 今回はUT/Postman検証が目的なので dev 依存も入れておきます
 RUN poetry install --no-interaction --no-ansi
 
-# アプリ本体をコピー
-COPY . .
+# ---- project_dir ----
+COPY backend/src /app/src
 
 # デフォルトの起動コマンドは docker-compose 側で指定（uvicorn）
 # ここではポートだけ開けておく
