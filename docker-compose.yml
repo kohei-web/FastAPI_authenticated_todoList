@@ -14,7 +14,8 @@ services:
       - .env
     volumes:
       - ./backend/src:/app/src
-      - ./.env:/app/.env:ro # ro:read onlyのこと
+      - ./backend/migrations:/app/migrations # マイグレーション
+      - ./backend/alembic.ini:/app/alembic.ini # 設定ファイル
     working_dir: /app
     command: >
       uvicorn src.main:app
